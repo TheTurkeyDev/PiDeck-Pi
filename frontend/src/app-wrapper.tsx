@@ -1,6 +1,6 @@
 import { GlobalStyles } from './global-styles';
 import { ThemeContextProvider, Toast } from 'gobble-lib-react';
-import App from './appp';
+import App from './app';
 
 function AppWrapper() {
     return (
