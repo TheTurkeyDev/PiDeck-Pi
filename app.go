@@ -2,8 +2,11 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 const (
@@ -43,6 +46,20 @@ func (a *App) readCon() {
 			fmt.Println("Error reading:", err.Error())
 		}
 		fmt.Println("Received: ", string(buffer[:mLen]))
+		var packet BasePacket
+		if err := json.Unmarshal(buffer[:mLen], &packet); err != nil {
+			fmt.Println("error:", err)
+		}
+
+		switch packet.Action {
+		case "updateButton":
+			var updatePacket ButtonUpdatePacket
+			if err := json.Unmarshal(buffer[:mLen], &updatePacket); err != nil {
+				fmt.Println("error:", err)
+				continue
+			}
+			runtime.EventsEmit(a.ctx, "updateButton", updatePacket.Data)
+		}
 	}
 }
 

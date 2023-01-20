@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { OnClick } from '../wailsjs/go/main/App';
 import styled from 'styled-components';
 import { Body1 } from 'gobble-lib-react';
@@ -38,14 +38,26 @@ function App() {
     );
 
     const onClick = (id: string) => {
-        console.log('here!');
         OnClick(id);
     };
+
+    useEffect(() => {
+        window.runtime.EventsOn('updateButton', (data: TriggerButton) => {
+            setButtons(old => [
+                ...old.filter(b => b.id !== data.id),
+                data
+            ]);
+        });
+
+        return () => {
+            window.runtime.EventsOff('updateButton');
+        };
+    }, []);
 
     return (
         <ButtonsWrapper width={width} height={height}>
             {
-                buttons.map(b => {
+                [...buttons].sort((a,b) => a.id.localeCompare(b.id)).map(b => {
                     return (
                         <StyledButton key={b.id} style={{ background: `#${b.backgroundColor}` }} onClick={() => onClick(b.id)}>
                             <Body1 style={{ color: `#${b.textColor}` }}>
