@@ -30,7 +30,7 @@ function App() {
     const [height, setHeight] = useState(4);
     const [buttons, setButtons] = useState<readonly TriggerButton[]>(
         Array.from({ length: width * height }).map((_, i) => ({
-            id: `${Math.floor(i / height)}-${i % width}`,
+            id: `${Math.floor(i / width)}-${i % width}`,
             backgroundColor: '808080',
             text: 'Button',
             textColor: 'ffffff'
