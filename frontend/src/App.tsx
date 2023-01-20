@@ -1,23 +1,62 @@
 import { useState } from 'react';
-import logo from './assets/images/logo-universal.png';
-import './App.css';
-import { Greet } from "../wailsjs/go/main/App";
+import { OnClick } from '../wailsjs/go/main/App';
+import styled from 'styled-components';
+import { Body1 } from 'gobble-lib-react';
+import { TriggerButton } from './trigger-button';
+
+type ButtonsWrapperProps = {
+    readonly width: number
+    readonly height: number
+}
+const ButtonsWrapper = styled.div<ButtonsWrapperProps>`
+    display: grid;
+    grid-template-columns: repeat(${({ width }) => width}, 1fr);
+    grid-template-rows: repeat(${({ height }) => height}, 1fr);
+    gap: 32px;
+    padding: 16px;
+    height: calc(100% - 32px);
+`;
+
+const StyledButton = styled.div`
+    border-radius: 8px;
+    height: 100%;
+    display: grid;
+    align-items: center;
+    justify-items: center;
+`;
 
 function App() {
-    const [resultText, setResultText] = useState("Please click the button 👉");
-    const updateResultText = (result: string) => setResultText(result);
+    const [width, setWidth] = useState(5);
+    const [height, setHeight] = useState(4);
+    const [buttons, setButtons] = useState<readonly TriggerButton[]>(
+        Array.from({ length: width * height }).map((_, i) => ({
+            id: `${Math.floor(i / height)}-${i % width}`,
+            backgroundColor: '808080',
+            text: 'Button',
+            textColor: 'ffffff'
+        }))
+    );
 
-    function greet() {
-        Greet("Hi!").then(updateResultText);
-    }
+    const onClick = (id: string) => {
+        console.log('here!');
+        OnClick(id);
+    };
 
     return (
-        <div id="App">
-            <img src={logo} id="logo" alt="logo" />
-            <span>{resultText}</span>
-            <button className="btn" onClick={greet}>Greet</button>
-        </div>
-    )
+        <ButtonsWrapper width={width} height={height}>
+            {
+                buttons.map(b => {
+                    return (
+                        <StyledButton key={b.id} style={{ background: `#${b.backgroundColor}` }} onClick={() => onClick(b.id)}>
+                            <Body1 style={{ color: `#${b.textColor}` }}>
+                                {b.text}
+                            </Body1>
+                        </StyledButton>
+                    );
+                })
+            }
+        </ButtonsWrapper>
+    );
 }
 
-export default App
+export default App;
